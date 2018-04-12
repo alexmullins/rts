@@ -11,13 +11,10 @@ def logger_init():
     now = datetime.datetime.now()
     filename = "runlog_{0:%Y-%m-%d-%H-%M-%S}.txt".format(now)
     home = pathlib.Path.home().joinpath("Desktop", filename)
-    print(home)
+    print("Creatd log file: {}", home)
     file = open(home, "a")
     log_file = csv.writer(file)
     log_file.writerow(["TIMESTAMP", "EVENT_TYPE", "DATA"])
-
-def logger_finish():
-    file.close()
 
 # Events:
 #   MOTOR
@@ -64,4 +61,5 @@ def logger_write_endrun(elapsed):
     fields.append("ENDRUN")
     fields.append("{}".format(elapsed))
     log_file.writerow(fields)
+    file.close()
 
