@@ -2,15 +2,16 @@ import csv
 import datetime
 import pathlib
 
-now = None
+start = None
 file = None
 log_file = None
 
 def logger_init():
     global file
     global log_file
-    global now
+    global start
     now = datetime.datetime.now()
+    start = now
     filename = "runlog_{0:%Y-%m-%d-%H-%M-%S}.txt".format(now)
     home = pathlib.Path.home().joinpath("Desktop", filename)
     print("Creatd log file: {}", home)
@@ -72,8 +73,8 @@ def logger_write_error(err):
     log_file.writerow(fields)
 
 def logger_write_endrun():
-    stop = datetime.datetime.now()
-    elapsed = stop - start
+    now = datetime.datetime.now()
+    elapsed = now - start
     fields = []
     fields.append("{:%Y-%m-%d %H:%M:%S.%f}".format(now))
     fields.append("ENDRUN")
