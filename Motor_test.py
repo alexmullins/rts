@@ -3,6 +3,7 @@ import time     # import the time library for the sleep function
 import brickpi3 # import the BrickPi3 drivers
 import serial
 import io
+import pilogger
 
 BP = brickpi3.BrickPi3() # Create an instance of the BrickPi3 class. BP will be the BrickPi3 object.
 BP.reset_all()
@@ -11,6 +12,7 @@ right_Motor = BP.PORT_A        #motor A is the right motor of the robot.
 BP.set_sensor_type(BP.PORT_3, BP.SENSOR_TYPE.NXT_LIGHT_ON)
 BP.set_sensor_type(BP.PORT_2, BP.SENSOR_TYPE.NXT_LIGHT_ON)
 BP.set_sensor_type(BP.PORT_1, BP.SENSOR_TYPE.NXT_ULTRASONIC)
+pilogger.logger_init()
 
 #initialize serial port for RFID
 ser = serial.Serial('/dev/ttyS0')
@@ -24,6 +26,7 @@ def readRFID():
             id = data.decode("utf-8")
             time.sleep(.001)
             print(id)
+            pilogger.logger_write_rfid(id)
             return id[1:13]                                        #return RFID value
         return
 
@@ -78,9 +81,11 @@ def getUltraSonicData():
         isObstacle(value)                        # print the distance in CM
     except brickpi3.SensorError as error:
         print(error)
+        pilogger.logger_write_error(error)
 def isObstacle(distance):
     time.sleep(0.05)
     print(distance)
+    pilogger.logger_write_ultrasonic(distance)
     if(distance < 15):
         while True:
             stop()
@@ -95,10 +100,13 @@ def getLightSensors():
         value = BP.get_sensor(BP.PORT_3)
         secondValue = BP.get_sensor(BP.PORT_2)
         print(value, secondValue)
+        pilogger.logger_write_light(0, value)
+        pilogger.logger_write_light(1, secondValue)
         getInLine(value, secondValue)
         getUltraSonicData()
     except brickpi3.SensorError as error:
         print(error)
+        pilogger.logger_write_error(error)
 def getInLine(leftSensor, rightSensor):
     if(rightSensor - leftSensor > 300):
         driftRight()

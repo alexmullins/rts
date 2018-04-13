@@ -21,12 +21,16 @@ def logger_init():
 #   RFID
 #   ULTRASONIC
 #   LIGHT
+#   ERROR
 #   ENDRUN
-def logger_write_motor(speed):
+def logger_write_motor(motor, speed):
+    m = "LEFT"
+    if motor == 1:
+        m = "RIGHT"
     now = datetime.datetime.now()
     fields = []
     fields.append("{:%Y-%m-%d %H:%M:%S.%f}".format(now))
-    fields.append("MOTOR")
+    fields.append("MOTOR-{}".format(m))
     fields.append("{}".format(speed))
     log_file.writerow(fields)
 
@@ -46,12 +50,23 @@ def logger_write_ultrasonic(distance):
     fields.append("{}".format(distance))
     log_file.writerow(fields)
 
-def logger_write_light(color):
+def logger_write_light(light, color):
+    l = "FIRST"
+    if light == 1:
+        l = "SECOND"
+    now = datetime.datetime.now()
+    fields = []
+    fields.append("{:%Y-%m-%d %H:%M:%S.%f}".format(now))
+    fields.append("LIGHT-{}".format(l))
+    fields.append("{}".format(color))
+    log_file.writerow(fields)
+
+def logger_write_error(err):
     now = datetime.datetime.now()
     fields = []
     fields.append("{:%Y-%m-%d %H:%M:%S.%f}".format(now))
     fields.append("LIGHT")
-    fields.append("{}".format(color))
+    fields.append("{}".format(err))
     log_file.writerow(fields)
 
 def logger_write_endrun(elapsed):
